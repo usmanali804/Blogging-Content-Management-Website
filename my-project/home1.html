@@ -1,0 +1,596 @@
+<?php
+session_start();
+if (!isset($_SESSION['email'])) {
+    header("Location: login.html");
+    exit();
+}
+?>
+<!DOCTYPE <html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <title>Write Up - Blogging Platform</title>
+
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        :root {
+            --primary-color: #ffcc00;
+            --secondary-color: #3a86ff;
+            --background-color: #f9f9f9;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            background-color: var(--background-color);
+        }
+
+        header {
+            background-color: #000;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            font-weight: bold;
+        }
+
+        .profile-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #fff;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            z-index: 1000;
+            min-width: 180px;
+        }
+
+        .dropdown-menu a {
+            display: block;
+            padding: 10px 15px;
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Dashboard Styles */
+        .dashboard h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-links a {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .dashboard-links a:hover {
+            text-decoration: underline;
+        }
+
+        .hero-section {
+            background: linear-gradient(to right, #000000, #333333), url('images\HeadBackground.jpeg');
+            background-size: cover;
+            color: white;
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .hero-section button {
+            background-color: var(--primary-color);
+            color: #000;
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .hero-section button:hover {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        /* Theory Section */
+        .theory-section {
+            background-color: #f8f8f8;
+            padding: 50px 10%;
+            text-align: center;
+        }
+
+        .theory-section h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .theory-section p {
+            font-size: 1rem;
+            color: #555;
+            line-height: 1.8;
+        }
+
+
+        /* Slider Section */
+        .slider-container {
+            position: relative;
+            width: 100%;
+            max-width: 145%;
+            /* Ensure the slider spans the full width */
+            margin: auto;
+            /* Remove any auto margin */
+            overflow: hidden;
+
+            padding: 30px 0;
+            /* Remove default padding if any */
+        }
+
+        .slider {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .slide {
+            display: flex;
+            min-width: 100%;
+            align-items: center;
+        }
+
+        .slide-content {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            width: 120%;
+            padding: 0;
+            /* Remove padding */
+            box-sizing: border-box;
+        }
+
+        .slide-content img {
+            width: 40%;
+            height: auto;
+            max-height: 400px;
+            /* Ensures images never exceed a set height */
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 40px;
+        }
+
+        .text-content {
+            width: 50%;
+        }
+
+        .text-content h2 {
+            margin: 0 0 10px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .text-content p {
+            margin: 0;
+            font-size: 16px;
+            color: #666;
+        }
+
+        .prev,
+        .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .prev {
+            left: 10px;
+        }
+
+        .next {
+            right: 10px;
+        }
+
+        .indicators {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .indicator {
+            width: 15px;
+            height: 15px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .indicator.active {
+            background-color: white;
+        }
+
+        .features-section {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        .features-section h1 {
+            font-size: 2rem;
+            color: #222;
+            /* Almost black heading */
+        }
+
+        .features-section p {
+            font-size: 1rem;
+            color: #555;
+            /* Medium grey subtext */
+            margin-bottom: 40px;
+        }
+
+        /* Features Container */
+        .features-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            max-width: 800px;
+            width: 120%;
+        }
+
+        .feature img {
+            width: 200px;
+            height: 150px;
+            border-radius: 8px;
+            object-fit: cover;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            /* Soft shadow for images */
+        }
+
+        .feature-info h3 {
+            font-size: 1.5rem;
+            color: #333;
+            margin: 0 0 10px;
+        }
+
+        .feature-info p {
+            font-size: 1rem;
+            color: #555;
+            /* Medium grey text */
+            margin: 0;
+        }
+
+        .feature-links {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .feature-links:hover {
+            color: #ccc;
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 768px) {
+            .features-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .feature {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .feature img {
+                width: 100%;
+                max-width: 300px;
+                height: auto;
+            }
+        }
+
+
+        /* Steps Section */
+        .steps {
+            background-color: #f8e0a3;
+            padding: 50px 10%;
+            text-align: center;
+        }
+
+        .steps h2 {
+            margin-bottom: 50px;
+        }
+
+        .step-box {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .step {
+            background: #fff;
+            padding: 20px;
+            width: 30%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .step img {
+            max-width: 100%;
+            border-radius: 10px;
+        }
+
+        /* Footer */
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #333;
+            color: #fff;
+        }
+
+        footer a {
+            color: #fcb415;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: #fff;
+        }
+
+        .social-media {
+            margin-top: 10px;
+        }
+
+        .social-media a {
+            margin: 0 10px;
+            color: #fcb415;
+            font-size: 20px;
+            text-decoration: none;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        .social-media a:hover {
+            transform: scale(1.2);
+            color: #fff;
+        }
+
+        /* Adding font-awesome icons (requires font-awesome library) */
+    </style>
+</head>
+
+<body>
+    <!-- Header Section -->
+    <header>
+        <div>Write Up</div>
+        <nav>
+            <a href="home1.html">Home</a>
+            <a href="blog1.html">Blog</a>
+            <a href="AboutUs1.html">About Us</a>
+            <a href="Pricing1.html">Pricing</a>
+            <a href="Contact1.html">Contact</a>
+        </nav>
+        <div class="profile-dropdown">
+            <img src="images/profile-icon.jpeg" alt="Profile" class="profile-icon" onclick="toggleDropdown()" />
+            <div class="dropdown-menu" id="dropdownMenu">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="Profile.html">Profile</a>
+                <a href="setting.html">Settings</a>
+                <a href="upgrade.html">Upgrade Plan</a>
+                <a href="logout.php">Logout</a>
+            </div>
+        </div>
+    </header>
+
+
+    <section class="hero-section">
+        <h1>Welcome to Write Up</h1>
+        <p>Your ultimate platform for seamless blogging and content management.</p>
+        <button>Contact Us</button>
+    </section>
+    <!-- Theory Section -->
+    <section class="theory-section">
+        <h2>What is Write Up?</h2>
+        <p>
+            Write Up is your one-stop platform for creating, managing, and growing your blog effortlessly.
+            Whether you're an aspiring writer or a professional blogger, Write Up provides intuitive tools
+            and templates to make blogging seamless and enjoyable.
+        </p>
+    </section>
+
+    <!-- Slider Section -->
+    <div class="slider-container">
+        <div class="slider">
+            <!-- Slide 1 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <img src="images/slider.jpeg" alt="Slide 1">
+                    <div class="text-content">
+                        <h2>Welcome to Write Up</h2>
+                        <p>Your ultimate platform for seamless blogging and content management. Discover tools to
+                            enhance your storytelling.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <img src="images/slider2.jpeg" alt="Slide 2">
+                    <div class="text-content">
+                        <h2>User-Friendly Interface</h2>
+                        <p>Navigate effortlessly through our intuitive interface that empowers you to create and manage
+                            your content without hassle.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <img src="images/Card3.jpeg" alt="Slide 3">
+                    <div class="text-content">
+                        <h2>Analytics Dashboard</h2>
+                        <p>Gain insights into your blog’s performance through our comprehensive analytics dashboard,
+                            helping you track engagement.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <button class="prev" onclick="changeSlide(-1)">&#10094;</button>
+        <button class="next" onclick="changeSlide(1)">&#10095;</button>
+
+        <!-- Indicators -->
+        <div class="indicators">
+            <span class="indicator active" onclick="goToSlide(0)"></span>
+            <span class="indicator" onclick="goToSlide(1)"></span>
+            <span class="indicator" onclick="goToSlide(2)"></span>
+        </div>
+    </div>
+
+
+    </div>
+    <script src="script.js"></script>
+
+
+
+    <!-- Steps Section -->
+    <section class="steps">
+        <h2>Start Your Blogging Journey</h2>
+        <div class="step-box">
+            <div class="step">
+                <img src="images/Card1.jpeg" alt="Step 1">
+                <h3>Create Your Account</h3>
+                <p>Sign up and gain instant access to all the features Write Up has to offer.</p>
+            </div>
+            <div class="step">
+                <img src="images/home3.jpeg" alt="Step 2">
+                <h3>Choose a Template</h3>
+                <p>Select and customize templates to match your unique style and voice.</p>
+            </div>
+            <div class="step">
+                <img src="images/card3_home.jpeg" alt="Step 3">
+                <h3>Start Writing & Publishing</h3>
+                <p>Write posts, add images, and publish your blog with ease.</p>
+            </div>
+        </div>
+    </section>
+    <!-- Features Section -->
+    <div class="features-section">
+        <h1>Unique Features</h1>
+        <p>Discover what makes Write Up the best choice for your blogging needs.</p>
+
+        <div class="features-container">
+            <!-- Feature 1 -->
+            <div class="feature">
+                <img src="images/section.jpeg" alt="Customizable Templates">
+                <div class="feature-info">
+                    <div class="feature-title">
+                        <a href="#" class="feature-links">
+                            <h3>Customizable Templates</h3>
+                        </a>
+                    </div>
+                    <p>Choose from a variety of customizable templates that suit your style, allowing you to create a
+                        unique and professional-looking blog effortlessly.</p>
+                </div>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="feature">
+                <div class="feature-info">
+                    <div class="feature-title">
+                        <a href="#" class="feature-links">
+                            <h3>Integrated SEO Tools</h3>
+                        </a>
+                    </div>
+                    <p>Enhance your blog's visibility with our integrated SEO tools, designed to help you optimize your
+                        content and reach a wider audience.</p>
+                </div>
+                <img src="images/Card3.jpeg" alt="SEO Tools">
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="feature">
+                <img src="images/3home.jpeg" alt="Analytics Dashboard">
+                <div class="feature-info">
+                    <div class="feature-title">
+                        <a href="#" class="feature-links">
+                            <h3>Analytics Dashboard</h3>
+                        </a>
+                    </div>
+
+                    <p>Gain insights into your blog's performance through our comprehensive analytics dashboard, helping
+                        you track engagement and improve your strategy.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 - Proudly built with <a href="home1.html">Write Up</a></p>
+        <div class="quick-links">
+            <a href="#">Privacy Policy</a> |
+            <a href="#">Terms of Service</a>
+        </div>
+        <div class="social-media">
+            <a href="https://facebook.com" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://twitter.com" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="https://instagram.com" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            <a href="https://youtube.com" target="_blank" aria-label="youtube"><i class="fab fa-youtube"></i></a>
+        </div>
+    </footer>
+    <script src="script1.js"></script>
+</body>
+
+</html>

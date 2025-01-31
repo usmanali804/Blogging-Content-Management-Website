@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Write Up - Login</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <style>
+        /* General Styles */
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            display: flex;
+            height: 100vh;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Left Section */
+        .left-section {
+            flex: 1;
+            background-color: #202020;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .branding h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #f7f7f7;
+        }
+
+        .branding p {
+            font-size: 1rem;
+            margin-bottom: 30px;
+            color: #ccc;
+        }
+
+        .illustration img {
+            max-width: 80%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Right Section */
+        .right-section {
+            flex: 1;
+            background-color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-box {
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .login-box h2 {
+            font-size: 1.8rem;
+            color: #000;
+            margin-bottom: 10px;
+        }
+
+        .subtext {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f7f7f7;
+            color: #333;
+        }
+
+        .input-group input:focus {
+            border-color: #000;
+            outline: none;
+        }
+
+        /* Error Message */
+        .field-error {
+            color: red;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        /* Login Button */
+        .login-btn {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .login-btn:hover {
+            background-color: #333;
+        }
+
+        /* Signup Link */
+        .signup-link {
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+
+        .signup-link a {
+            color: #000;
+            text-decoration: none;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        .brand-link {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .brand-link h1 {
+            margin: 0;
+        }
+
+        .brand-link:hover {
+            color: #ccc;
+        }
+    </style>
+    <div class="container">
+        <!-- Left Section -->
+        <div class="left-section">
+            <div class="branding">
+                <a href="#" class="brand-link">
+                    <h1>Write Up</h1>
+                </a>
+                <p>Where your ideas come to life.</p>
+            </div>
+            <div class="illustration">
+                <img src="images/illustration.jpeg" alt="Write Up Illustration">
+            </div>
+        </div>
+
+        <!-- Right Section -->
+        <div class="right-section">
+            <div class="login-box">
+                <h2>Welcome to Write Up</h2>
+                <p class="subtext">Log in to access your dashboard.</p>
+                <form action="login.php" method="post">
+                    <div class="input-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                        <p class="field-error" id="emailError"></p>
+                    </div>
+                    <div class="input-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                        <p class="field-error" id="passwordError"></p>
+                    </div>
+                    <button type="submit" class="login-btn">Login</button>
+                </form>
+                <p class="signup-link">Don’t have an account? <a href="signup.html">Sign up now</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get URL query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const errorMessage = urlParams.get('error_message');
+        const errorType = urlParams.get('error_type');
+
+        // Display error messages
+        if (errorType === 'email_error') {
+            document.getElementById('emailError').textContent = errorMessage;
+        } else if (errorType === 'password_error') {
+            document.getElementById('passwordError').textContent = errorMessage;
+        }
+    </script>
+</body>
+
+</html>

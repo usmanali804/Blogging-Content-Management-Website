@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Write Up - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        :root {
+            --primary-color: #ffcc00;
+            --secondary-color: #3a86ff;
+            --background-color: #f9f9f9;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            background-color: var(--background-color);
+        }
+
+        header {
+            background-color: #000;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header div:first-child {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        header nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        header nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        header nav a:hover {
+            color: var(--primary-color);
+        }
+
+        .profile-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .profile-icon i {
+            font-size: 20px;
+            color: #666;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 45px;
+            background-color: white;
+            min-width: 180px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            padding: 8px 0;
+            z-index: 1000;
+        }
+
+        .dropdown-menu a {
+            color: #000;
+            text-decoration: none;
+            padding: 10px 20px;
+            display: block;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #f5f5f5;
+        }
+
+        .dropdown-menu a:first-child {
+            font-weight: bold;
+        }
+
+        .blog-image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            margin: 10px 0;
+            display: none;
+        }
+
+        .image-upload-container {
+            margin-bottom: 15px;
+        }
+
+        .image-upload-container label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .blog-item img {
+            max-width: 100%;
+            height: auto;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 50px 20px;
+        }
+
+        .stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #fff;
+            width: 250px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            text-align: center;
+            transition: 0.3s ease-in-out;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .blog-form {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .blog-form input, .blog-form textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .blog-list {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .blog-item {
+            border-bottom: 1px solid #eee;
+            padding: 20px 0;
+        }
+
+        .blog-item:last-child {
+            border-bottom: none;
+        }
+
+        .button {
+            background: var(--primary-color);
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .button:hover {
+            background: var(--secondary-color);
+            color: #fff;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .edit-btn {
+            background: #28a745;
+            color: white;
+            margin-right: 10px;
+        }
+
+        .actions {
+            margin-top: 15px;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 15px 20px;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: #fff;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: var(--primary-color);
+        }
+
+        .social-media {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .social-media a {
+            color: var(--primary-color);
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+
+        .social-media a:hover {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div>Write Up</div>
+        <nav>
+            <a href="home1.html">Home</a>
+            <a href="blog1.html">Blog</a>
+            <a href="AboutUs1.html">About Us</a>
+            <a href="Pricing1.html">Pricing</a>
+            <a href="Contact1.html">Contact</a>
+        </nav>
+        <div class="profile-dropdown">
+            <img src="images/profile-icon.jpeg" alt="Profile" class="profile-icon" onclick="toggleDropdown()" />
+            <div class="dropdown-menu" id="dropdownMenu">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="Profile.html">Profile</a>
+                <a href="#settings">Settings</a>
+                <a href="#upgrade">Upgrade Plan</a>
+                <a href="logout.php">Log Out</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Total Blogs</h3>
+                <p id="totalBlogs">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total Views</h3>
+                <p id="totalViews">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Last Updated</h3>
+                <p id="lastUpdated">Never</p>
+            </div>
+        </div>
+
+        <div class="blog-form">
+            <h2 id="formTitle">Add New Blog</h2>
+            <input type="text" id="blogTitle" placeholder="Blog Title">
+            <div class="image-upload-container">
+                <label for="blogImage">Blog Image:</label>
+                <input type="file" id="blogImage" accept="image/*" onchange="previewImage(event)">
+                <img id="imagePreview" class="blog-image-preview" alt="Preview">
+            </div>
+            <textarea id="blogContent" rows="5" placeholder="Blog Content"></textarea>
+            <button class="button" onclick="handleBlogSubmit()">Submit</button>
+        </div>
+
+        <div class="blog-list">
+            <h2>Your Blogs</h2>
+            <div id="blogsList"></div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            &copy; 2025 - Proudly built with <a href="#">Write Up</a>
+        </div>
+        <div class="footer-links">
+            <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
+        </div>
+        <div class="social-media">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+    </footer>
+
+    <script>
+        let blogs = JSON.parse(localStorage.getItem('blogs')) || [];
+        let editingId = null;
+
+        function toggleDropdown() {
+            var menu = document.getElementById('dropdownMenu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Close dropdown when clicking outside
+        window.addEventListener('click', function(e) {
+            var menu = document.getElementById('dropdownMenu');
+            var profileIcon = document.querySelector('.profile-icon');
+            if (!profileIcon.contains(e.target)) {
+                menu.style.display = 'none';
+            }
+        });
+
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                const preview = document.getElementById('imagePreview');
+                
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleBlogSubmit() {
+            const title = document.getElementById('blogTitle').value;
+            const content = document.getElementById('blogContent').value;
+            const imagePreview = document.getElementById('imagePreview');
+            const imageData = imagePreview.style.display === 'block' ? imagePreview.src : null;
+
+            if (!title || !content) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            if (editingId !== null) {
+                const index = blogs.findIndex(blog => blog.id === editingId);
+                blogs[index] = { ...blogs[index], title, content, image: imageData };
+                editingId = null;
+                document.getElementById('formTitle').textContent = 'Add New Blog';
+            } else {
+                const newBlog = {
+                    id: Date.now(),
+                    title,
+                    content,
+                    image: imageData,
+                    date: new Date().toISOString(),
+                    views: 0
+                };
+                blogs.push(newBlog);
+            }
+
+            localStorage.setItem('blogs', JSON.stringify(blogs));
+            document.getElementById('blogTitle').value = '';
+            document.getElementById('blogContent').value = '';
+            document.getElementById('imagePreview').style.display = 'none';
+            document.getElementById('blogImage').value = '';
+            renderBlogs();
+            updateStats();
+        }
+
+        function editBlog(id) {
+            const blog = blogs.find(blog => blog.id === id);
+            document.getElementById('blogTitle').value = blog.title;
+            document.getElementById('blogContent').value = blog.content;
+            if (blog.image) {
+                const preview = document.getElementById('imagePreview');
+                preview.src = blog.image;
+                preview.style.display = 'block';
+            }
+            document.getElementById('formTitle').textContent = 'Edit Blog';
+            editingId = id;
+        }
+
+        function deleteBlog(id) {
+            if (confirm('Are you sure you want to delete this blog?')) {
+                blogs = blogs.filter(blog => blog.id !== id);
+                localStorage.setItem('blogs', JSON.stringify(blogs));
+                renderBlogs();
+                updateStats();
+            }
+        }
+
+        function incrementViews(id) {
+            const index = blogs.findIndex(blog => blog.id === id);
+            blogs[index].views = (blogs[index].views || 0) + 1;
+            localStorage.setItem('blogs', JSON.stringify(blogs));
+            updateStats();
+            renderBlogs();
+        }
+
+        function updateStats() {
+            document.getElementById('totalBlogs').textContent = blogs.length;
+            const totalViews = blogs.reduce((sum, blog) => sum + (blog.views || 0), 0);
+            document.getElementById('totalViews').textContent = totalViews;
+            document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+        }
+
+        function renderBlogs() {
+            const blogsListElement = document.getElementById('blogsList');
+            blogsListElement.innerHTML = blogs.map(blog => `
+                <div class="blog-item">
+                    <h3>${blog.title}</h3>
+                    ${blog.image ? `<img src="${blog.image}" alt="${blog.title}">` : ''}
+                    <p>${blog.content}</p>
+                    <small>Created: ${new Date(blog.date).toLocaleString()} | Views: ${blog.views || 0}</small>
+                    <div class="actions">
+                        <button class="button edit-btn" onclick="editBlog(${blog.id})">Edit</button>
+                        <button class="button delete-btn" onclick="deleteBlog(${blog.id})">Delete</button>
+                        <button class="button" onclick="incrementViews(${blog.id})">Simulate View</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Initial render
+        renderBlogs();
+        updateStats();
+    </script>
+</body>
+</html>

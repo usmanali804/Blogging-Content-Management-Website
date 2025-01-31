@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Write Up</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #ffcc00;
+            --secondary-color: #3a86ff;
+            --background-color: #f9f9f9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: #000;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header div:first-child {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        header nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        header nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        header nav a:hover {
+            color: var(--primary-color);
+        }
+
+        .profile-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .profile-icon i {
+            font-size: 20px;
+            color: #666;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 45px;
+            background-color: white;
+            min-width: 180px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            padding: 8px 0;
+            z-index: 1000;
+        }
+
+        .dropdown-menu a {
+            color: #000;
+            text-decoration: none;
+            padding: 10px 20px;
+            display: block;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #f5f5f5;
+        }
+
+        .settings-container {
+            max-width: 1000px;
+            width: 95%;
+            margin: 50px auto;
+            padding: 0 15px;
+            flex: 1;
+            margin-bottom: 100px;
+        }
+
+        @media (max-width: 768px) {
+            .settings-container {
+                width: 100%;
+                padding: 0 10px;
+                margin: 30px auto;
+            }
+        }
+
+        .settings-header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        .settings-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
+
+        .settings-header h1 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .settings-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .settings-section {
+            background: white;
+            padding: 30px 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            border: 1px solid #eee;
+        }
+
+        .settings-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .settings-section h2 {
+            color: #333;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+        }
+
+        .settings-section h2 i {
+            color: var(--primary-color);
+        }
+
+        .setting-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+            transition: all 0.3s ease;
+        }
+
+        .setting-item:hover {
+            background: #fff;
+            border-color: var(--primary-color);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .setting-item label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .setting-item p {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .theme-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            width: 100%;
+        }
+
+        .theme-option {
+            padding: 12px 15px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .theme-option i {
+            font-size: 1.2rem;
+        }
+
+        .theme-option:hover {
+            border-color: var(--primary-color);
+            background: #f8f9fa;
+        }
+
+        .theme-option.active {
+            border-color: var(--primary-color);
+            background: var(--primary-color);
+            color: #000;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 1rem;
+            color: #333;
+            transition: all 0.3s ease;
+            background: #fff;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.1);
+        }
+
+        .save-button {
+            background: var(--primary-color);
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 30px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .save-button:hover {
+            background: #e6b800;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .save-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .save-button i {
+            font-size: 1.2rem;
+        }
+
+        /* Custom select arrow */
+        .form-control {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M8 11.5l-5-5h10l-5 5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            padding-right: 40px;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 15px 20px;
+            text-align: center;
+            margin-top: auto;
+            width: 100%;
+        }
+
+        footer p {
+            margin-bottom: 10px;
+        }
+
+        footer a {
+            color: #ffcc00;
+            text-decoration: none;
+        }
+
+        .social-links {
+            margin-top: 10px;
+        }
+
+        .social-links a {
+            color: #fff;
+            margin: 0 10px;
+            font-size: 18px;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: #ffcc00;
+        }
+
+        .footer-links {
+            margin-top: 5px;
+        }
+
+        .footer-links a {
+            color: #ffcc00;
+            margin: 0 10px;
+            text-decoration: none;
+        }
+
+        .footer-links span {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div>Write Up</div>
+        <nav>
+            <a href="home1.html">Home</a>
+            <a href="blog1.html">Blog</a>
+            <a href="AboutUs1.html">About Us</a>
+            <a href="Pricing1.html">Pricing</a>
+            <a href="Contact1.html">Contact</a>
+        </nav>
+        <div class="profile-dropdown">
+            <img src="images/profile-icon.jpeg" alt="Profile" class="profile-icon" onclick="toggleDropdown()" />
+            <div class="dropdown-menu" id="dropdownMenu">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="Profile.html">Profile</a>
+                <a href="setting.html">Settings</a>
+                <a href="upgrade.html">Upgrade Plan</a>
+                <a href="logout.php">Log Out</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="settings-container">
+        <div class="settings-header">
+            <h1><i class="fas fa-cog"></i> Account Settings</h1>
+            <p>Manage your account preferences and settings</p>
+        </div>
+
+        <form id="settingsForm">
+            <div class="settings-section">
+                <h2><i class="fas fa-paint-brush"></i> Appearance</h2>
+                <div class="setting-item">
+                    <label>Theme</label>
+                    <p>Choose how Write Up looks to you</p>
+                    <div class="theme-options">
+                        <div class="theme-option active" data-theme="light">
+                            <i class="fas fa-sun"></i> Light
+                        </div>
+                        <div class="theme-option" data-theme="dark">
+                            <i class="fas fa-moon"></i> Dark
+                        </div>
+                        <div class="theme-option" data-theme="system">
+                            <i class="fas fa-laptop"></i> System
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h2><i class="fas fa-bell"></i> Notifications</h2>
+                <div class="setting-item">
+                    <label>Email Notifications</label>
+                    <p>Receive email updates about your account</p>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <label>Push Notifications</label>
+                    <p>Get notified about new features and updates</p>
+                    <label class="toggle-switch">
+                        <input type="checkbox">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h2><i class="fas fa-shield-alt"></i> Privacy</h2>
+                <div class="setting-item">
+                    <label>Profile Visibility</label>
+                    <p>Control who can see your profile</p>
+                    <select class="form-control">
+                        <option value="public">Public</option>
+                        <option value="private">Private</option>
+                        <option value="friends">Friends Only</option>
+                    </select>
+                </div>
+                <div class="setting-item">
+                    <label>Activity Status</label>
+                    <p>Show when you're active on Write Up</p>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="save-button">
+                <i class="fas fa-save"></i> Save Changes
+            </button>
+        </form>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 - Proudly built with <a href="#">Write Up</a></p>
+        <div class="footer-links">
+            <a href="#">Privacy Policy</a> <span>|</span> <a href="#">Terms of Service</a>
+        </div>
+        <div class="social-links">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+    </footer>
+
+    <script>
+        // Theme management
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            
+            // Update active state of theme options
+            document.querySelectorAll('.theme-option').forEach(option => {
+                option.classList.remove('active');
+                if (option.getAttribute('data-theme') === theme) {
+                    option.classList.add('active');
+                }
+            });
+        }
+
+        function getPreferredTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                return savedTheme;
+            }
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+
+        // Toggle dropdown menu
+        function toggleDropdown() {
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Close dropdown when clicking outside
+        window.addEventListener('click', function(e) {
+            const menu = document.getElementById('dropdownMenu');
+            const profileIcon = document.querySelector('.profile-icon');
+            
+            if (!profileIcon.contains(e.target) && !menu.contains(e.target)) {
+                menu.style.display = 'none';
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize theme
+            setTheme(getPreferredTheme());
+
+            // Theme selection
+            const themeOptions = document.querySelectorAll('.theme-option');
+            themeOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const theme = this.getAttribute('data-theme');
+                    if (theme === 'system') {
+                        localStorage.removeItem('theme');
+                        setTheme(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                    } else {
+                        setTheme(theme);
+                    }
+                });
+            });
+
+            // Listen for system theme changes
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                const currentTheme = localStorage.getItem('theme');
+                if (!currentTheme || currentTheme === 'system') {
+                    setTheme(e.matches ? 'dark' : 'light');
+                }
+            });
+
+            // Form submission
+            const settingsForm = document.getElementById('settingsForm');
+            settingsForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const saveButton = this.querySelector('.save-button');
+                saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+                
+                // Simulate saving
+                setTimeout(() => {
+                    saveButton.innerHTML = '<i class="fas fa-check"></i> Saved Successfully!';
+                    setTimeout(() => {
+                        saveButton.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+                    }, 2000);
+                }, 1500);
+            });
+        });
+    </script>
+</body>
+</html>
